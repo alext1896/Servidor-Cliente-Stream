@@ -15,15 +15,18 @@ public class ClienteStream {
 		
 		try {
 			// se crea la conexión
-			String host = "pc2812";
+			String host = "localhost";
 			Socket sc = new Socket(host, 2500); // conexión
 			
 			OutputStream ostream = sc.getOutputStream();
 			ObjectOutput s = new ObjectOutputStream(ostream);
 			DataInputStream istream = new DataInputStream(sc.getInputStream());
+			
 			num[0] = 5; num[1] = 2; //prepara la petición
+			
 			s.writeObject(num);
 			s.flush();
+			
 			res = istream.readInt();
 			sc.close();
 			
