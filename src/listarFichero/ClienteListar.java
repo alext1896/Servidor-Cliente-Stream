@@ -1,5 +1,7 @@
 package listarFichero;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
@@ -24,7 +26,7 @@ public class ClienteListar {
 		
 		Scanner sc = new Scanner (System.in);
 		String [] recibir;
-		
+		String fichero = null;
 		try {
 			// se crea la conexión
 			String host = "localhost";
@@ -33,40 +35,64 @@ public class ClienteListar {
 			OutputStream ostream = socket.getOutputStream();
 			ObjectOutput s = new ObjectOutputStream(ostream);
 			
-			
 			int num;
+		
 			System.out.println("Introduzca -1 para listar la carpeta Escritorio o 100 para finalizar el programa");
 			num = sc.nextInt();
-//			do {
-//				switch (num) {
-//				
-//				case -1: 
-					s.writeObject(num);
-					s.flush();
-					
-					ObjectInputStream istream = new ObjectInputStream(socket.getInputStream());
-					recibir = (String[]) istream.readObject();
-					
-					for (int i = 0; i < recibir.length; i++) {
-						System.out.println(i + 1 + " - " + recibir[i]);
-					}
-					
-					socket.close();
-//				}
+			
+			
+				
+			s.writeObject(num);
+			s.flush();
+			ObjectInputStream istream = new ObjectInputStream(socket.getInputStream());
+			recibir = (String[]) istream.readObject();
+						
+			for (int i = 0; i < recibir.length; i++) {
+				System.out.println(i + 1 + " - " + recibir[i]);
+			}
+			
+			System.out.println("Introduce el nombre del archivo que quieres descargar");
+			fichero = sc.nextLine();
+			fichero = sc.nextLine();
+			s.writeObject(fichero);
+			s.flush();
+			
+			FileOutputStream fosFichero = new FileOutputStream ("recibidos/"+fichero);
+			InputStream istreamFichero = socket.getInputStream();
+			
+			byte arrayByte []= new byte [1024];
+			int tamaño;
+			
+			while ((tamaño = istreamFichero.read(arrayByte)) != -1) {
+				fosFichero.write(arrayByte, 0, tamaño);
+			}
+				
+			System.out.println("El fichero se ha copiado");
+			fosFichero.close();
+			socket.close();
 
-			
-//			}while (num != 100);
-			
-			
-			
-			
 		}catch (Exception e) {
 			
 			System.err.println("Excepcion: " + e.toString());
 			e.printStackTrace();
 		}finally {
 			sc.close();
+			
 		}
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
