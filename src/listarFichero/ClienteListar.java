@@ -39,7 +39,7 @@ public class ClienteListar {
 		
 			System.out.println("Introduzca -1 para listar la carpeta Escritorio o 100 para finalizar el programa");
 			num = sc.nextInt();
-			
+			sc.nextLine();
 			
 				
 			s.writeObject(num);
@@ -52,7 +52,6 @@ public class ClienteListar {
 			}
 			
 			System.out.println("Introduce el nombre del archivo que quieres descargar");
-			fichero = sc.nextLine();
 			fichero = sc.nextLine();
 			s.writeObject(fichero);
 			s.flush();
