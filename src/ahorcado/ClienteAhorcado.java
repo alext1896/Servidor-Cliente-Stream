@@ -26,29 +26,49 @@ public class ClienteAhorcado {
 
 		// Creamos el panel con el número de letras que tiene la palabra
 		System.out.println("El juego va a terminar cuando tengas 7 errores");
-		int errores = 0;
-//		boolean habia = true;
+		
 		espacios(3);
 		for (int i = 0; i < palabra.length(); i++) {
 			System.out.print("_" + " ");
 		}
-		espacios(2);
-		boolean terminado = false;
 		
-		while (terminado == false) {
-			System.out.println("Introduce la letra que crees que está. Número de errores =" + errores);
+		espacios(2);
+		char[] imprimir;
+		int errores = 0;
+		boolean ganar = true;
+		while (errores != 7) {
+			System.out.println("Introduce la letra que crees que está. Número de errores = " + errores);
 			String letra = sc.nextLine();
 
 			s.writeObject(letra);
 			s.flush();
-			String imprimir;
-			imprimir = (String) istream.readObject();
-			System.out.print(imprimir);
+			
+			//Recibo la palabra
+			imprimir = (char []) istream.readUnshared();
+			errores = istream.readInt();
+			
+			for (int j = 0; j < imprimir.length; j++) {
+				System.out.print(imprimir [j] + " ");
+			}
 			espacios (1);
 			
+			for (int i = 0; i < imprimir.length; i++) {
+				if (imprimir [i] == '_') {
+					ganar = false;
+				}
+			}
+			ganar = true;
 		}
 		
+		if (errores == 7) {
+			System.out.println("Ha perdido el juego");
+		} else if (ganar == true) {
+			System.out.println("Ha ganado el juego");
+		}
+		String terminado = "terminado";
+		s.writeObject(terminado);
 		sc.close();
+		
 	}
 
 	private static void espacios(int numLineas) {
@@ -56,14 +76,5 @@ public class ClienteAhorcado {
 			System.out.println();
 		}
 	}
-
-//	private static void muñeco (boolean acierto) {
-//		if (acierto) {
-//			
-//		}
-//		
-//		
-//		
-//	}
 
 }

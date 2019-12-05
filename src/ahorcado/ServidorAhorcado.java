@@ -1,7 +1,6 @@
 package ahorcado;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
@@ -13,7 +12,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 public class ServidorAhorcado {
 
@@ -50,40 +48,58 @@ public class ServidorAhorcado {
 				}
 				// Metemos todas las palabras en un array
 				String[] arrayPalabras = new String[palabras.length()];
+				
 				// Cortamos las palabras cuando encuentre un espacio y lo metemos en un array
 				// para que cada palabra tenga un id
 				arrayPalabras = palabras.split(" ");
+				
 				// Generamos un número aleatorio
 				int num = (int) (Math.random() * (1 - arrayPalabras.length + 1) + arrayPalabras.length);
+				
 				// Metemos una palabra aleatoria con el índice aleatorio que generamos
 				// anteriormente
 				String palabra = arrayPalabras[num];
+				
 				// Enviamos la palabra al cliente
 				ObjectOutputStream ostream = new ObjectOutputStream(sc.getOutputStream());
 				ostream.writeObject(palabra);
 				ostream.flush();
-//				int errores = 0;
-//				boolean habia = false;
-				String enviar = " ";
-				while (true) {
-					String letra = (String) in.readObject();
-					char l = letra.charAt(0);
-					char[] array = new char[palabra.length()];
+				
+				char enviar []= new char [palabra.length()];
+				String letra = (String) in.readObject();
+				letra = letra.toUpperCase();
+				char l = letra.charAt(0);
+				char[] arrayPalabra = new char[palabra.length()];
+				
+				//PONEMOS LA PALABRA SELECCIONADA EN UN ARRAY DE CARACTERES
+				for (int i = 0; i < palabra.length(); i++) {
+					arrayPalabra[i] = palabra.charAt(i);
+					enviar [i] = '_';
+				}
+				int errores = 0;
+				while (letra.equals("terminado") == false) {
 
-					for (int i = 0; i < palabra.length(); i++) {
-						array[i] = palabra.charAt(i);
-					}
+					//PONEMOS LA LETRA ENVIADA EN EL LUGAR QUE CORRESPONDE
+					boolean habia = false;
 
-					for (int j = 0; j < array.length; j++) {
-						if (l == array[j]) {
-							enviar = letra;
-						} else {
-							enviar = " _ ";
+					for (int j = 0; j < arrayPalabra.length; j++) {
+						if (l == arrayPalabra[j]) {
+							enviar [j] = l;
+							habia = true;
 						}
 					}
-
-					ostream.writeObject(enviar);
+					if (habia == false) {
+						errores++;
+					}
+					
+					ostream.writeUnshared(enviar);
 					ostream.flush();
+					ostream.writeInt(errores);
+					ostream.flush();
+
+					letra = (String) in.readObject();
+					letra = letra.toUpperCase();
+					l = letra.charAt(0);
 				}
 			} catch (Exception e) {
 				System.err.println("excepcion " + e.toString());
@@ -97,31 +113,3 @@ public class ServidorAhorcado {
 
 }
 
-//	Path ruta = null;
-//	ruta = Paths.get("../Servidor-Cliente Stream/src/texto/ficheroCreado");
-//
-//	if (ruta.toFile().exists()) {
-//		try (BufferedWriter wr = Files.newBufferedWriter(ruta, charset, StandardOpenOption.APPEND)) {
-//			wr.write(" " + texto);
-//			
-//		}catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}else {
-//		if (ruta.toFile().createNewFile()) {
-//			try (BufferedWriter wr = Files.newBufferedWriter(ruta, charset, StandardOpenOption.APPEND)) {
-//					wr.write(texto);
-//					
-//				}catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//	}catch(Exception e) {
-//		System.err.println("excepcion " + e.toString() );
-//		e.printStackTrace() ;
-//	}
-//}catch (Exception e) {
-//System.err.println("excepcion " + e.toString() );
-//e.printStackTrace() ;
-//}
